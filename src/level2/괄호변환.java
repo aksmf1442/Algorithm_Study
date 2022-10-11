@@ -1,14 +1,12 @@
 package level2;
 
-import java.util.Stack;
-
 public class 괄호변환 {
 
     public static void main(String[] args) {
-        Solution solution = new Solution();
+        괄호변환_Solution solution = new 괄호변환_Solution();
         solution.solution("(()())()");
-        solution.solution(")(");
-        solution.solution("()))((()");
+//        solution.solution(")(");
+//        solution.solution("()))((()");
     }
 }
 
@@ -16,7 +14,11 @@ public class 괄호변환 {
  * 알아야 할 것
  * 1. (, )의 숫자가 같다면 균형잡힌 괄호 문자열
  * 2. 1번의 조건을 만족하고 (, )의 짝도 맞다면 올바른 괄호 문자열
- * 3. 주어진 괄호를 올바른 괄호 문자열로 변환하는 것이 목표
+ */
+
+/**
+ * 제한사항
+ * 1. p는 '(' 와 ')' 로만 이루어진 문자열이며 길이는 2 이상 1,000 이하인 짝수입니다.
  */
 
 /**
@@ -32,27 +34,38 @@ public class 괄호변환 {
  *  (4) u의 첫 번째와 마지막 문자를 제거하고, 나머지 문자열의 괄호 방향을 뒤집어서 뒤에 붙입니다.
  *  (5) 생성된 문자열을 반환합니다.
  */
-class Solution {
+
+/**
+ * goal: 주어진 괄호를 올바른 괄호 문자열로 변환하는 것이 목표
+ */
+
+/**
+ * 시간복잡도: O(n)
+ */
+class 괄호변환_Solution {
     public String solution(String p) {
         System.out.println("findCorrectBracket = " + findCorrectBracket(p));
         return findCorrectBracket(p);
     }
 
     private String findCorrectBracket(String p) {
-        // 빈 문자열일시 빈 문자열 반환
+        // 1. 빈 문자열일시 빈 문자열 반환
         if (p.equals("")) {
             return "";
         }
 
+        // 2. 문자열 w를 두 "균형잡힌 괄호 문자열" u, v로 분리합니다.
         String[] uv = extractUAndV(p);
         String u = uv[0];
         String v = uv[1];
 
-        // 올바른 괄호 문자열인지 확인
+        // 3. 올바른 괄호 문자열인지 확인
         if (isCorrectBracket(u)) {
+            // 3.1 v를 다시 재귀적으로 올바른 괄호 문자열 구하기
             return u + findCorrectBracket(v);
         }
 
+        // 4. 아니라면 문제 설명에서 하란대로 하기.
         u = u.substring(1, u.length() - 1);
         String newU = "";
 

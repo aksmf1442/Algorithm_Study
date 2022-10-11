@@ -1,6 +1,5 @@
 package level2;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -10,9 +9,7 @@ import java.util.Queue;
 /**
  * 알아야 할 것
  * 1. 양방향 그래프
- * 2. 1번 마을에서 각 마을로 음식 배달을 하려고 하는데, N개의 마을에서 K시간 이하로 배달이 가능한 마을에서만
- *    주문을 받으려고 하고 가능한 수를 결과값으로 출력
- * 3. road의 a, b, c는 각각 a, b는 마을을 의미하고 c는 가중치
+ * 2. road의 a, b, c는 각각 a, b는 마을을 의미하고 c는 가중치
  */
 
 /**
@@ -23,15 +20,17 @@ import java.util.Queue;
  */
 
 /**
- * 문제 풀이 순서
- * 1. 일단 양방향 그래프를 표현하기
- * 2.
+ * goal: 1번 마을에서 각 마을로 이동할 때의 최단 거리가 K 이하인 마을의 수 구하기
  */
+
+/**
+ * 시간복잡도 : V^2 = 4000(2000*2) ^ 2 = 대략 8000000
+ * 개선된 다익스트라를 쓰면 더 빠르긴하다.(ElogV)
+ */
+
 public class 배달 {
 
-    static List<int[]>[] graph;
-
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         // 예제 값 초기화
         int N = 5;
         int[][] road = new int[6][3];
@@ -43,10 +42,21 @@ public class 배달 {
         road[5] = new int[]{5, 4, 2};
         int K = 3;
 
-        int result = 1;
+        배달_Solution solution = new 배달_Solution();
+        System.out.println("solution = " + solution.solution(N, road, K));
+
+    }
+
+}
+
+class 배달_Solution {
+
+    List<int[]>[] graph;
+
+    public int solution(int N, int[][] road, int K) {
         graph = new ArrayList[N+1];
 
-        // 각 road 별 가중치 초기화
+        // road의 각 마을과 가중치를 통한 양방향 그래프를 초기화
         for (int i = 0; i < road.length; i++) {
             int[] arr = road[i];
             int a = arr[0];
@@ -65,22 +75,19 @@ public class 배달 {
             graph[b].add(new int[]{a, c});
         }
 
-        for (int i = 2; i <= N; i++) {
-            int distance = bfs(1, i, N);
-            if (distance <= K) {
-                System.out.println("i = " + i);
-                result += 1;
-            }
-        }
-        System.out.println("result = " + result);
+        int result = dijkstra(1, N, K);
 
+        return result;
     }
 
-    private static int bfs(int start, int end, int N) {
+    private int dijkstra(int start, int N, int K) {
+        // 최단 거리를 넣을 배열
+        int[] distanceArr = new int[N + 1];
+        Arrays.fill(distanceArr, Integer.MAX_VALUE);
+        distanceArr[start] = 0;
+
+        // queue 현재 있는 마을과 여기까지의 가중치를 넣을 예정
         Queue<List<Integer>> queue = new LinkedList<>();
-        int[] arr = new int[N + 1];
-        Arrays.fill(arr, Integer.MAX_VALUE);
-        arr[start] = 0;
         List<Integer> a = new ArrayList<>();
         a.add(start);
         a.add(0);
@@ -94,8 +101,8 @@ public class 배달 {
             for (int[] current : graph[node]) {
                 int target = current[0];
                 int targetDistance = current[1];
-                
-                if (targetDistance + distance >= arr[target]) {
+
+                if (targetDistance + distance >= distanceArr[target]) {
                     continue;
                 }
 
@@ -105,13 +112,18 @@ public class 배달 {
                 l.add(target);
                 l.add(dis);
 
-                // 최소값 초기화
-                arr[target] = dis;
-                
+                distanceArr[target] = dis;
                 queue.add(l);
             }
+
         }
-        
-        return arr[end];
+
+        int result = 1;
+        for (int i = 2; i < distanceArr.length; i++) {
+            if (distanceArr[i] <= K) {
+                result += 1;
+            }
+        }
+        return result;
     }
 }

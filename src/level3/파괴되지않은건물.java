@@ -19,6 +19,16 @@ package level3;
  */
 
 /**
+ * 풀이 방법 V1
+ * 1. 이중 for문으로 직접 값 변경
+ * -> 이렇게 하며 시간 복잡도가 250000(skill 길이) * 1000(N) * 1000(M) = 250000000000 2500억이 되어서 실패
+ */
+
+import java.util.Arrays;
+
+/**
+ * 풀이 방법 V2
+ * 1. skill 따로 먼저 계산을 해서 한 번에 넣기.
  */
 
 public class 파괴되지않은건물 {
@@ -37,24 +47,62 @@ public class 파괴되지않은건물 {
 
 class 파괴되지않은건물_Solution {
 
+    //V1
+//    public int solution(int[][] board, int[][] skill) {
+//        int answer = 0;
+//
+//        for (int[] s : skill) {
+//            Skill sk = new Skill(s[0], s[1], s[2], s[3], s[4], s[5]);
+//
+//            for (int x = sk.x1; x <= sk.x2; x++) {
+//                for (int y = sk.y1; y <= sk.y2; y++) {
+//                    if (sk.type == Type.ATTACK) {
+//                        board[x][y] -= sk.weight;
+//                    }
+//
+//                    if (sk.type == Type.RECOVERY) {
+//                        board[x][y] += sk.weight;
+//                    }
+//                }
+//            }
+//        }
+//
+//        for (int i = 0; i < board.length; i++) {
+//            for (int j = 0; j < board[i].length; j++) {
+//                if (board[i][j] > 0) {
+//                    answer += 1;
+//                }
+//            }
+//        }
+//        return answer;
+//    }
+
+    // V2 - skill을 다 더하고 한 번에 값 넣기.(누적합)
     public int solution(int[][] board, int[][] skill) {
         int answer = 0;
+        int[][] sumSkill = new int[board.length + 1][board[0].length + 1];
+        initSumSkill(sumSkill);
 
         for (int[] s : skill) {
             Skill sk = new Skill(s[0], s[1], s[2], s[3], s[4], s[5]);
 
-            for (int x = sk.x1; x <= sk.x2; x++) {
-                for (int y = sk.y1; y <= sk.y2; y++) {
-                    if (sk.type == Type.ATTACK) {
-                        board[x][y] -= sk.weight;
-                    }
+            if (sk.skillType == SkillType.ATTACK) {
+                sumSkill[sk.x1][sk.y1] -= sk.weight;
+                sumSkill[sk.x2 + 1][sk.y2 + 1] -= sk.weight;
+                sumSkill[sk.x1][sk.y2 + 1] += sk.weight;
+                sumSkill[sk.x2 + 1][sk.y1] += sk.weight;
+            }
 
-                    if (sk.type == Type.RECOVERY) {
-                        board[x][y] += sk.weight;
-                    }
-                }
+            if (sk.skillType == SkillType.RECOVERY) {
+                sumSkill[sk.x1][sk.y1] += sk.weight;
+                sumSkill[sk.x2 + 1][sk.y2 + 1] += sk.weight;
+                sumSkill[sk.x1][sk.y2 + 1] -= sk.weight;
+                sumSkill[sk.x2 + 1][sk.y1] -= sk.weight;
             }
         }
+
+        accumulateSumSkill(sumSkill);
+        calculateBoardWithSumSkill(board, sumSkill);
 
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
@@ -63,20 +111,52 @@ class 파괴되지않은건물_Solution {
                 }
             }
         }
+
         return answer;
+    }
+
+    private void calculateBoardWithSumSkill(int[][] board, int[][] sumSkill) {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                board[i][j] += sumSkill[i][j];
+            }
+        }
+    }
+
+    // 누적합 구하기
+    private void accumulateSumSkill(int[][] sumSkill) {
+        // 좌우로 먼저 더하기
+        for (int i = 0; i < sumSkill.length; i++) {
+            for (int j = 0; j < sumSkill[i].length - 1; j++) {
+                sumSkill[i][j + 1] += sumSkill[i][j];
+            }
+        }
+
+        //상하로 더하기
+        for (int i = 0; i < sumSkill.length - 1; i++) {
+            for (int j = 0; j < sumSkill[i].length; j++) {
+                sumSkill[i + 1][j] += sumSkill[i][j];
+            }
+        }
+    }
+
+    private void initSumSkill(int[][] sumSkill) {
+        for (int i = 0; i < sumSkill.length; i++) {
+            Arrays.fill(sumSkill[i], 0);
+        }
     }
 }
 
 class Skill {
-    Type type;
+    SkillType skillType;
     int x1;
     int y1;
     int x2;
     int y2;
     int weight;
 
-    public Skill(int type, int x1, int y1, int x2, int y2, int weight) {
-        this.type = type == 1 ? Type.ATTACK : Type.RECOVERY;
+    public Skill(int skillType, int x1, int y1, int x2, int y2, int weight) {
+        this.skillType = skillType == 1 ? SkillType.ATTACK : SkillType.RECOVERY;
         this.x1 = x1;
         this.y1 = y1;
         this.x2 = x2;
@@ -85,6 +165,6 @@ class Skill {
     }
 }
 
-enum Type {
+enum SkillType {
     ATTACK, RECOVERY
 }

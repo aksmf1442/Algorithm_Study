@@ -41,17 +41,13 @@ public class 양궁대회 {
  * 2. info의 길이 = 11
  */
 
-/**
- * 풀이 방법 1.
- */
-
 class 양궁대회_Solution {
 
     int N;
     int[] result = {-1};
     int[] lion = new int[11];
     int maxValue = Integer.MIN_VALUE;
-    int idx = 0;
+
     public int[] solution(int n, int[] info) {
         N = n;
         Arrays.fill(lion, 0);
@@ -60,7 +56,6 @@ class 양궁대회_Solution {
     }
 
     private void dfs(int[] info, int count) {
-        idx++;
         if (count == N) {
             calculateScore(info);
             return;

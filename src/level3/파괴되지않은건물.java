@@ -1,14 +1,7 @@
 package level3;
 
 /**
- * goal: 내구도가 0이하가 된 건물의 개수 반
- * <p>
- * 알아야 할 것 1. skill은 [type, r1, c1, r2, c2, degree] 형태 2. type이 1일 경우 적의 공격, 2일 경우 회복 3. (r1, c1)부터
- * (r2, c2)까지 공격하거나 회복
- */
-
-/**
- * goal: 내구도가 0이하가 된 건물의 개수 반
+ * goal: 내구도가 1이상인 건물의 수 구하기
  */
 
 /**
@@ -28,7 +21,7 @@ import java.util.Arrays;
 
 /**
  * 풀이 방법 V2
- * 1. skill 따로 먼저 계산을 해서 한 번에 넣기.
+ * 1. skill 따로 먼저 계산을 해서 한 번에 넣기.(부분합)
  */
 
 public class 파괴되지않은건물 {
@@ -77,7 +70,7 @@ class 파괴되지않은건물_Solution {
 //        return answer;
 //    }
 
-    // V2 - skill을 다 더하고 한 번에 값 넣기.(누적합)
+    // V2 - skill을 다 더하고 한 번에 값 넣기.(부분합)
     public int solution(int[][] board, int[][] skill) {
         int answer = 0;
         int[][] sumSkill = new int[board.length + 1][board[0].length + 1];

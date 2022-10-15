@@ -39,7 +39,6 @@ class 영어끝말잇기_Solution {
 
         wordMap.put(words[0], 1);
         for (int i = 1; i < words.length; i++) {
-
             // 한 번도 사용되지 않았고, 끝말잇기도 성공했다면 pass
             if (wordMap.get(words[i]) == null && words[i].charAt(0) == words[i - 1].charAt(
                 words[i - 1].length() - 1)) {

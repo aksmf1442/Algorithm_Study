@@ -26,12 +26,9 @@ public class 기지국설치 {
  */
 
 /**
- * 풀이 공식
- * 1. stations들의 사이 값(11 - 4) - 전파가능범위 공식(2W + 1(3)) = 4
- * 2. 1에서 나온 값을 2W+1로 나누고 나눈 값의 몫을 더하고 나머지가 있다면 +1을 한다.
- *    ex: 몫[4 // (2W+1) = 1] + 나머지면 + 1[4 % (2W+1) != 0]
- * 3. 여기서 중요한 것은 몫이 1이상일 경우만 나머지를 확인 한다.
- * 4. 처음 기지국과 마지막 기지국은 끝 기지국ㄱ
+ * 알아야 할 것
+ * 1. 전파가능범위 공식 = 2W + 1
+ * 2.
  */
 
 /**
@@ -39,9 +36,7 @@ public class 기지국설치 {
  * 1. 제한사항을 보니 완전탐색으로 하면 시간초과가 발생할듯 하다.
  * 2. 일단 stations를 통해서 전파가 닿는 부분을 체크해야 할듯
  * 3. W의 크기를 확인하면 1: 3, 2: 5, 3: 7, 4: 9라는 규칙 발견 가능(W: 전파가능범위) - 2W + 1의 공식을 만들 수 있음
- * 4. 이 공식을 활용하여 위의 풀이 공식대로 문제를 해결
- * 5. 위의 공식대로 하면 해결이 되지만 남은 부분이 만약
- *    (맨 처음 기지국 - W - 1  > 0이 된다면 위의 풀이 공식 적용) , (N - 맨 뒤의 기지국 - W > 0이 된다면 풀이 공식 적용)
+ * 4. 전파가 통하지 않는 구간이 있으면 그 구간을 나눗셈과 나머지를 통해 몇 개의 기지국이 필요한지 구하기
  */
 
 class 기지국설치_Solution {
@@ -52,31 +47,36 @@ class 기지국설치_Solution {
         int answer = 0;
         possibleDistance = (2 * w) + 1;
 
-        // 맨 처음 확인
-        if (stations[0] - w > 1) {
-            answer += requiredNumberOfObject(stations[0] - w - 1, 0);
+        // 맨 앞 계산
+        int notElectricWaveSection = stations[0] - w - 1;
+        if (notElectricWaveSection > 0) {
+            answer += requiredNumberOfObject(notElectricWaveSection);
         }
 
-        // 맨 뒤 확인
-        if (stations[stations.length - 1] + w < n) {
-            answer += requiredNumberOfObject(n, stations[stations.length - 1] + w);
+        // 맨 뒤 계산
+        notElectricWaveSection = n - (stations[stations.length - 1] + w);
+        if (notElectricWaveSection > 0) {
+            answer += requiredNumberOfObject(notElectricWaveSection);
         }
 
         for (int i = 1; i < stations.length; i++) {
-            answer += requiredNumberOfObject(stations[i] - w - 1, stations[i - 1] + w);
+            // 전파가 통하지 않는 구간이 0보다 클 경우 계산
+            notElectricWaveSection = (stations[i] - w - 1) - (stations[i - 1] + w);
+            if (notElectricWaveSection > 0) {
+                answer += requiredNumberOfObject(notElectricWaveSection);
+            }
         }
 
         return answer;
     }
 
-    private int requiredNumberOfObject(int station1, int station2) {
+    private int requiredNumberOfObject(int notElectricWaveSection) {
         int result = 0;
-        int diffStation = station1 - station2;
-        int quotient = diffStation / possibleDistance;
-        int remainder = diffStation % possibleDistance;
+        int quotient = notElectricWaveSection / possibleDistance;
+        int remainder = notElectricWaveSection % possibleDistance;
 
         result += quotient;
-        if (remainder > 0) {
+        if (remainder != 0) {
             result += 1;
         }
 

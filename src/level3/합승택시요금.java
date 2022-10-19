@@ -1,12 +1,6 @@
 package level3;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
-
 public class 합승택시요금 {
 
     public static void main(String[] args) {
@@ -38,31 +32,9 @@ public class 합승택시요금 {
 class 합승택시요금_Solution{
 
     int[][] distances;
-    List<Point>[] graph;
 
     public int solution(int n, int s, int a, int b, int[][] fares) {
-        distances = new int[n + 1][n + 1];
-        graph = new List[n + 1];
-
-        for (int i = 0; i <= n; i++) {
-            Arrays.fill(distances[i], Integer.MAX_VALUE);
-        }
-
-        for (int i = 0; i <= n; i++) {
-            graph[i] = new ArrayList<>();
-        }
-
-        for (int[] fare : fares) {
-            int point1 = fare[0];
-            int point2 = fare[1];
-            int distance = fare[2];
-            graph[point1].add(new Point(point2, distance));
-            graph[point2].add(new Point(point1, distance));
-        }
-
-        for (int i = 1; i <= n; i++) {
-            findShortDistances(i);
-        }
+        floydWarshall(n, fares);
 
         int result = Integer.MAX_VALUE;
         for (int i = 1; i <= n; i++) {
@@ -72,38 +44,33 @@ class 합승택시요금_Solution{
         return result;
     }
 
-    private void findShortDistances(int start) {
-        Queue<Point> queue = new PriorityQueue<>();
-        queue.add(new Point(start, 0));
-        distances[start][start] = 0;
-        while (!queue.isEmpty()) {
-            Point current = queue.poll();
-
-            for (Point target : graph[current.point]) {
-                int distance = current.distance + target.distance;
-
-                if (distances[start][target.point] < distance) {
+    private void floydWarshall(int n, int[][] fares) {
+        distances = new int[n + 1][n + 1];
+        for (int i = 0; i <= n; i++) {
+            for (int j = 0; j <= n; j++) {
+                if (i == j) {
+                    distances[i][j] = 0;
                     continue;
                 }
+                distances[i][j] = 100000001;
+            }
+        }
 
-                distances[start][target.point] = distance;
-                queue.add(new Point(target.point, distance));
+        for (int[] fare : fares) {
+            int point1 = fare[0];
+            int point2 = fare[1];
+            int distance = fare[2];
+            distances[point1][point2] = distance;
+            distances[point2][point1] = distance;
+        }
+
+        for (int k = 1; k <= n; k++) {
+            for (int i = 1; i <= n; i++) {
+                for (int j = 1; j <= n; j++) {
+                    distances[i][j] = Math.min(distances[i][j], distances[i][k] + distances[k][j]);
+                }
             }
         }
     }
-}
 
-class Point implements Comparable<Point> {
-    int point;
-    int distance;
-
-    public Point(int point, int distance) {
-        this.point = point;
-        this.distance = distance;
-    }
-
-    @Override
-    public int compareTo(Point o) {
-        return this.distance - o.distance;
-    }
 }

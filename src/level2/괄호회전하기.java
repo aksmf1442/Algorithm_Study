@@ -1,5 +1,6 @@
 package level2;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
@@ -29,45 +30,40 @@ class 괄호회전하기_Solution {
 
     public int solution(String s) {
         int answer = 0;
+        List<String> lst = Arrays.stream(s.split("")).collect(Collectors.toList());
         for (int i = 0; i < s.length(); i++) {
-            List<String> lst = Arrays.stream(s.split("")).collect(Collectors.toList());
-            // 왼쪽으로 이동
-            for (int j = 0; j < i; j++) {
-                lst.add(lst.remove(0));
-            }
-
             Stack<String> stack = new Stack<>();
-            while (!lst.isEmpty()) {
+            for (String parentheses : lst) {
                 if (stack.isEmpty()) {
-                    stack.add(lst.remove(0));
+                    stack.add(parentheses);
                     continue;
                 }
 
-                if (stack.peek().equals("(") && lst.get(0).equals(")")) {
-                    lst.remove(0);
+                if (stack.peek().equals("(") && parentheses.equals(")")) {
                     stack.pop();
                     continue;
                 }
 
-                if (stack.peek().equals("[") && lst.get(0).equals("]")) {
-                    lst.remove(0);
+                if (stack.peek().equals("[") && parentheses.equals("]")) {
                     stack.pop();
                     continue;
                 }
 
-                if (stack.peek().equals("{") && lst.get(0).equals("}")) {
-                    lst.remove(0);
+                if (stack.peek().equals("{") && parentheses.equals("}")) {
                     stack.pop();
                     continue;
                 }
 
-                stack.add(lst.remove(0));
+                stack.add(parentheses);
             }
 
 
             if (stack.isEmpty()) {
                 answer++;
             }
+
+            // 왼쪽으로 한 칸 이동
+            lst.add(lst.remove(0));
         }
         return answer;
     }

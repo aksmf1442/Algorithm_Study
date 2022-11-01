@@ -14,18 +14,12 @@ public class 양과늑대 {
     }
 }
 
-/**
- * 나의 생각
- * 1. 양의 수가 늑대 수와 같아지는 순간 양이 이길 수가 없는 상태가 됌 그래서 정지.
- * 2. 스택을 사용한다.
- * 3.
- */
-
 class 양과늑대_Solution {
     int maxSheep = 0;
     int[] info;
     int[][][] visited;
     List<Integer>[] graph;
+
     public int solution(int[] info, int[][] edges) {
         this.info = info;
         visited = new int[info.length][info.length + 1][info.length + 1];
@@ -35,11 +29,12 @@ class 양과늑대_Solution {
     }
 
     private void dfs(int sheep, int wolf, int current) {
-        if (info[current] == 0) {
+        int currentAnimal = info[current];
+        if (currentAnimal == 0) {
             sheep++;
         }
 
-        if (info[current] == 1) {
+        if (currentAnimal == 1) {
             wolf++;
         }
 
@@ -49,14 +44,14 @@ class 양과늑대_Solution {
 
         maxSheep = Math.max(maxSheep, sheep);
 
-        for (int i = 0; i < graph[current].size(); i++) {
-            Integer next = graph[current].get(i);
-            int temp = info[current];
+        for (int next: graph[current]) {
+            // next의 노드에 도달했을 때 이전에 같은 상황을 마주한 적이 있는지 확인
+            // 같은 상황을 마주했던 곳을 또 가면 무한 루프에 빠지기 때문에 방지하기 위해 visited를 사용
             if (visited[next][sheep][wolf] == 0) {
                 info[current] = -1;
                 visited[current][sheep][wolf] = 1;
                 dfs(sheep, wolf, next);
-                info[current] = temp;
+                info[current] = currentAnimal;
                 visited[current][sheep][wolf] = 0;
             }
         }

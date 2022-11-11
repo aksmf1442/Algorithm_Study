@@ -27,27 +27,26 @@ public class 길찾기게임 {
 
 class 길찾기게임_Solution {
 
-    public static ArrayList<Node> nodeList = new ArrayList<>();
-    public static int index = 0;
+    public int index = 0;
 
     public int[][] solution(int[][] nodeinfo) {
+        List<Node> nodes = new ArrayList<>();
         // node 생성
-        for(int i = 0; i < nodeinfo.length; i++) {
-            nodeList.add(new Node(i+1, nodeinfo[i][0], nodeinfo[i][1]));
+        for (int i = 0; i < nodeinfo.length; i++) {
+            int nodeNumber = i + 1;
+            int x = nodeinfo[i][0];
+            int y = nodeinfo[i][1];
+            nodes.add(new Node(nodeNumber, x, y));
         }
+
         // y 기준 내림차순 정렬
-        Collections.sort(nodeList);
+        Collections.sort(nodes);
 
         // 루트 노드
-        Node root = nodeList.get(0);
+        Node root = nodes.get(0);
+        connectNodes(nodes, root);
 
-        // 노드 연결
-        for(int i = 1; i < nodeList.size(); i++) {
-            Node child = nodeList.get(i);
-            connectNode(root, child);
-        }
-
-        int[][] answer = new int[2][nodeList.size()];
+        int[][] answer = new int[2][nodes.size()];
 
         // 전위 순회
         preOrder(answer, root);
@@ -59,16 +58,24 @@ class 길찾기게임_Solution {
         return answer;
     }
 
+    private void connectNodes(List<Node> nodes, Node root) {
+        // 노드 연결
+        for (int i = 1; i < nodes.size(); i++) {
+            Node child = nodes.get(i);
+            connectNode(root, child);
+        }
+    }
+
     // 노드 연결
-    public static void connectNode(Node parent, Node child) {
-        if(child.x < parent.x) {
-            if(parent.left == null) {
+    public void connectNode(Node parent, Node child) {
+        if (child.x < parent.x) {
+            if (parent.left == null) {
                 parent.left = child;
             } else {
                 connectNode(parent.left, child);
             }
         } else {
-            if(parent.right == null) {
+            if (parent.right == null) {
                 parent.right = child;
             } else {
                 connectNode(parent.right, child);
@@ -77,24 +84,33 @@ class 길찾기게임_Solution {
     }
 
     // 전위 순회
-    public static void preOrder(int[][] arr, Node node) {
-        if(node != null) {
+    public void preOrder(int[][] arr, Node node) {
+        if (node != null) {
             arr[0][index++] = node.data;
-            if(node.left != null) preOrder(arr, node.left);
-            if(node.right != null) preOrder(arr, node.right);
+            if (node.left != null) {
+                preOrder(arr, node.left);
+            }
+            if (node.right != null) {
+                preOrder(arr, node.right);
+            }
         }
     }
 
     // 후위 순회
-    public static void postOrder(int[][] arr, Node node) {
-        if(node != null) {
-            if(node.left != null) postOrder(arr, node.left);
-            if(node.right != null) postOrder(arr, node.right);
+    public void postOrder(int[][] arr, Node node) {
+        if (node != null) {
+            if (node.left != null) {
+                postOrder(arr, node.left);
+            }
+            if (node.right != null) {
+                postOrder(arr, node.right);
+            }
             arr[1][index++] = node.data;
         }
     }
 
-    class Node implements Comparable<Node>{
+    class Node implements Comparable<Node> {
+
         int data;
         int x;
         int y;
@@ -102,7 +118,7 @@ class 길찾기게임_Solution {
         Node right;
 
 
-        Node(int data, int x, int y){
+        Node(int data, int x, int y) {
             this.data = data;
             this.x = x;
             this.y = y;

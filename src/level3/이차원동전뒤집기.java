@@ -48,7 +48,7 @@ class 이차원동전뒤집기_Solution {
             for (int i = 0; i < row; i++) {
                 int comp = 1 << i;
 
-                if (unit > 0 && comp > 0) {
+                if (unit != 0 && comp != 0) {
                     rowFlipped.add(new ArrayList<>(flipped.get(i)));
                     flipCnt++;
                     continue;

@@ -34,12 +34,12 @@ class 후보키_Solution {
         return candidateKeys.size();
     }
 
-    private void dfs(int[] visited, int start, int end, int depth, String[][] relation) {
-        if (depth == end) {
+    private void dfs(int[] visited, int start, int target, int depth, String[][] relation) {
+        if (depth == target) {
             List<Integer> keyIndex = new ArrayList<>();
             String key = "";
 
-            // 컬럼을 end만큼 합치기
+            // 컬럼을 target의 수만큼 합치기
             for (int i = 0; i < column; i++) {
                 if (visited[i] == 1) {
                     key += String.valueOf(i);
@@ -50,16 +50,16 @@ class 후보키_Solution {
             Map<String, Integer> map = new HashMap<>();
 
             for (int i = 0; i < row; i++) {
-                String sumColumn = "";
+                String attributes = "";
                 for (int j : keyIndex) {
-                    sumColumn += relation[i][j];
+                    attributes += relation[i][j];
                 }
 
                 // 유일성 만족 X
-                if (map.containsKey(sumColumn)) {
+                if (map.containsKey(attributes)) {
                     return;
                 }
-                map.put(sumColumn, 0);
+                map.put(attributes, 0);
             }
 
             for (String candidateKey : candidateKeys) {
@@ -84,7 +84,7 @@ class 후보키_Solution {
                 continue;
             };
             visited[i] = 1;
-            dfs(visited, i, end, depth + 1, relation);
+            dfs(visited, i + 1, target, depth + 1, relation);
             visited[i] = 0;
         }
     }

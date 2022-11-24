@@ -38,7 +38,6 @@ class 길찾기게임_Solution {
             int y = nodeinfo[i][1];
             nodes.add(new Node(nodeNumber, x, y));
         }
-
         // y 기준 내림차순 정렬
         Collections.sort(nodes);
 

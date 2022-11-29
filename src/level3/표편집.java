@@ -1,7 +1,5 @@
 package level3;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
 
 public class 표편집 {
@@ -10,7 +8,7 @@ public class 표편집 {
         표편집_Solution solution = new 표편집_Solution();
         int n = 8;
         int k = 2;
-        String[] cmd = {"D 2", "C", "U 3", "C", "D 4", "C", "U 2", "Z", "Z"};
+        String[] cmd = {"D 2", "C", "U 3", "C", "D 4", "C", "U 2", "Z", "Z", "U 1", "C"};
         String result = solution.solution(n, k, cmd);
         for (int i = 0; i < result.length(); i++) {
             System.out.print(result.charAt(i));
@@ -21,53 +19,67 @@ public class 표편집 {
 class 표편집_Solution {
 
     public String solution(int n, int k, String[] cmd) {
-        int[] pre = new int[n];
-        int[] next = new int[n];
-        for(int i = 0; i < n; i++) {
-            pre[i] = i - 1;
-            next[i] = i + 1;
-        }
-        next[n - 1] = -1;
+        int pointer = k;
+        Stack<Integer> stack = new Stack<>();
 
-        Stack<Node> stack = new Stack<>();
-        StringBuilder sb = new StringBuilder("O".repeat(n));
-        for(int i = 0; i < cmd.length; i++) {
-            char c = cmd[i].charAt(0);
-            if(c == 'U') {
-                int num = Integer.valueOf(cmd[i].substring(2));
-                while(num-- > 0) {
-                    k = pre[k];
-                }
-            } else if(c == 'D') {
-                int num = Integer.valueOf(cmd[i].substring(2));
-                while(num-- > 0) {
-                    k = next[k];
-                }
-            } else if(c == 'C') {
-                stack.push(new Node(pre[k], k, next[k]));
-                if(pre[k] != -1) next[pre[k]] = next[k]; //현재 노드 삭제 후 앞뒤 연결
-                if(next[k] != -1) pre[next[k]] = pre[k];
-                sb.setCharAt(k, 'X');
+        int graphSize = n;
 
-                if(next[k] != -1) k = next[k];
-                else k = pre[k]; //마지막 행인 경우에 바로 윗 행 선택
-            } else {
-                Node node = stack.pop();
-                if(node.pre != -1) next[node.pre] = node.cur; //연결 정보 복구
-                if(node.nxt != -1) pre[node.nxt] = node.cur;
-                sb.setCharAt(node.cur, 'O');
+        for (String commandStr : cmd) {
+            String[] splitCommand = commandStr.split(" ");
+            Command command= null;
+
+            if (splitCommand.length == 1) {
+                command = new Command(splitCommand[0], 0);
+            }
+
+            if (splitCommand.length == 2) {
+                command = new Command(splitCommand[0], Integer.parseInt(splitCommand[1]));
+            }
+
+            if (command.value.equals("U")) {
+                pointer-= command.move;
+            }
+
+            if (command.value.equals("D")) {
+                pointer += command.move;
+            }
+
+            if (command.value.equals("C")) {
+                stack.add(pointer);
+                graphSize--;
+                if (pointer > graphSize - 1) {
+                    pointer--;
+                }
+            }
+
+            if (command.value.equals("Z")) {
+                if (stack.pop() <= pointer) {
+                    pointer++;
+                }
+                graphSize++;
             }
         }
-        return sb.toString();
+
+        StringBuilder answer = new StringBuilder();
+        for (int i = 0; i < graphSize; i++) {
+            answer.append("O");
+        }
+
+        while (!stack.isEmpty()) {
+            int idx = stack.pop();
+            answer.insert(idx, "X");
+        }
+
+        return answer.toString();
     }
 
-    public class Node{
-        int pre, cur, nxt;
+    class Command {
+        String value;
+        int move;
 
-        public Node(int pre, int cur, int nxt) {
-            this.pre = pre;
-            this.cur = cur;
-            this.nxt = nxt;
+        public Command(String cmd, int move) {
+            this.value = cmd;
+            this.move = move;
         }
     }
 }

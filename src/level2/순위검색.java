@@ -1,4 +1,4 @@
-package level3;
+package level2;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,7 +29,6 @@ class 순위검색_Solution {
     Map<String, List<Integer>> map = new HashMap<>();
     public int[] solution(String[] info, String[] query) {
         int[] answer = new int[query.length];
-
         for (String userInfo: info) {
             dfs("", userInfo.split(" "), 0);
         }

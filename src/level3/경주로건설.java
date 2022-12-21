@@ -18,15 +18,22 @@ class 경주로건설_Solution {
     int[] dx = {0, 0, -1, 1};
     int[] dy = {-1, 1, 0, 0};
 
+    int N;
+
     public int solution(int[][] board) {
-        int N = board.length;
+        N = board.length;
 
         int[][][] costArr = new int[N][N][4];
         for (int i = 0; i < N; i++)
             for (int j = 0; j < N; j++)
                 Arrays.fill(costArr[i][j], Integer.MAX_VALUE);
 
-        // 오른쪽, 위쪽
+        bfs(board, costArr);
+        return Arrays.stream(costArr[N - 1][N - 1]).min().getAsInt();
+    }
+
+    private void bfs(int[][] board, int[][][] costArr) {
+        // 오른쪽, 아래쪽
         Queue<Node> queue = new LinkedList<>();
         queue.add(new Node(0, 0, 0, 1));
         queue.add(new Node(0, 0, 0, 3));
@@ -47,8 +54,6 @@ class 경주로건설_Solution {
                 queue.add(new Node(nx, ny, cost, i));
             }
         }
-
-        return Arrays.stream(costArr[N - 1][N - 1]).min().getAsInt();
     }
 
     class Node {

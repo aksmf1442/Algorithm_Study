@@ -14,11 +14,25 @@ public class 양과늑대 {
     }
 }
 
+/**
+ * 핵심
+ * - 모든 경우의 수를 따져봐야함.
+ * - 양이 늑대의 수와 같아지는 순간 그 경우의 수는 종료
+ * - 노드마다 몇 개의 양을 지니고 있을 때 방문을 했엇는지 체크하고 방문했었다면 종료
+ */
+
+/**
+ * 풀이 순서
+ * 1. 노드끼리 양방향으로 연결하기
+ * 2. 루트노드부터 연결된 노드에 방문하기
+ * 3. 현재 지니고 있는 양의 개수가 늑대와 같아지면 해당 경우의 수는 종료
+ */
 class 양과늑대_Solution {
+
     int maxSheep = 0;
     int[] info;
     int[][][] visited;
-    List<Integer>[] graph;
+    List<List<Integer>> graph;
 
     public int solution(int[] info, int[][] edges) {
         this.info = info;
@@ -44,30 +58,30 @@ class 양과늑대_Solution {
 
         maxSheep = Math.max(maxSheep, sheep);
 
-        for (int next: graph[current]) {
-            // next의 노드에 도달했을 때 이전에 같은 상황을 마주한 적이 있는지 확인
-            // 같은 상황을 마주했던 곳을 또 가면 무한 루프에 빠지기 때문에 방지하기 위해 visited를 사용
-            if (visited[next][sheep][wolf] == 0) {
-                info[current] = -1;
-                visited[current][sheep][wolf] = 1;
-                dfs(sheep, wolf, next);
-                info[current] = currentAnimal;
-                visited[current][sheep][wolf] = 0;
+        for (int next: graph.get(current)) {
+            if (visited[next][sheep][wolf] == 1) {
+                continue;
             }
+            info[current] = -1;
+            visited[current][sheep][wolf] = 1;
+            dfs(sheep, wolf, next);
+            info[current] = currentAnimal;
+            visited[current][sheep][wolf] = 0;
         }
     }
 
     private void initGraph(int[] info, int[][] edges) {
-        graph = new ArrayList[info.length];
+        graph = new ArrayList<>();
         for (int i = 0; i < info.length; i++) {
-            graph[i] = new ArrayList<>();
+            graph.add(new ArrayList<>());
         }
 
-        for (int i = 0; i < edges.length; i++) {
-            int a = edges[i][0];
-            int b = edges[i][1];
-            graph[a].add(b);
-            graph[b].add(a);
+        for (int[] edge : edges) {
+            int parent = edge[0];
+            int child = edge[1];
+            graph.get(parent).add(child);
+            graph.get(child).add(parent);
         }
     }
+
 }

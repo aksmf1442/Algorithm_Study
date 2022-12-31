@@ -3,10 +3,9 @@ package level3;
 public class 광고삽입 {
 
     public static void main(String[] args) {
-        String playTime = "02:03:55";
-        String advTime = "00:14:15";
-        String[] logs = {"01:20:15-01:45:14", "00:40:31-01:00:00", "00:25:50-00:48:29",
-            "01:30:59-01:53:29", "01:37:44-02:02:30"};
+        String playTime = "99:59:59";
+        String advTime = "25:00:00";
+        String[] logs = {"69:59:59-89:59:59", "01:00:00-21:00:00", "79:59:59-99:59:59", "11:00:00-31:00:00"};
         광고삽입_Solution solution = new 광고삽입_Solution();
         System.out.println(
             "solution.solution(playTime, advTime, logs) = " + solution.solution(playTime, advTime,
@@ -14,72 +13,75 @@ public class 광고삽입 {
     }
 }
 
+/**
+ * 풀이 순서
+ * 1. 시간의 로그를 통해서 부분합을 구해준다.
+ * 2. 초기값으로 광고가 삽입되는 시간만큼 맨 앞에서부터 부분합을 통해 구한 값을 더해준다.
+ * 3. 맨 앞에를 제거, 맨 뒤를 추가하는 방식으로 처음부터 끝까지 확인하면서 2번에서 구한 값보다 큰 값이 나오면 값을 해당 값으로 변경해준다.
+ * 4. 끝까지 돌면 결과값이 나온다.
+ */
+
 class 광고삽입_Solution {
 
     public String solution(String play_time, String adv_time, String[] logs) {
         int playTime = timeToSecond(play_time);
         int advTime = timeToSecond(adv_time);
-        int[] total = new int[playTime + 1];
+        int[] prefixSumArr = findPrefixSumArr(logs, playTime);
+
+        int startIdx = 0;
+        long sum = 0;
+
+        for (int i = 0; i < advTime; i++) {
+            sum += prefixSumArr[i];
+        }
+
+        long maxSum = sum;
+        for (int i = 1; i <= playTime - advTime; i++) {
+            sum -= prefixSumArr[i - 1];
+            sum += prefixSumArr[i + advTime - 1];
+            if (sum > maxSum) {
+                maxSum = sum;
+                startIdx = i;
+            }
+        }
+
+        return secondToTime(startIdx);
+    }
+
+    private int[] findPrefixSumArr(String[] logs, int playTime) {
+        int[] arr = new int[playTime + 1];
 
         for (String log : logs) {
-            String[] arr = log.split("-");
-
-            int start = timeToSecond(arr[0]);
-            int end = timeToSecond(arr[1]);
-
-            for (int j = start; j < end; j++) {
-                total[j]++;
-            }
+            String[] logTime = log.split("-");
+            int start = timeToSecond(logTime[0]);
+            int end = timeToSecond(logTime[1]);
+            arr[start]++;
+            arr[end]--;
         }
 
-        long sum = 0;
-        for (int i = 0; i < advTime; i++) {
-            sum += total[i];
+        for (int i = 1; i < arr.length; i++) {
+            arr[i] += arr[i - 1];
         }
-
-        long max = sum;
-        int start = 0;
-        for (int i = 1, j = advTime; j < playTime; i++, j++) {
-            sum += total[j] - total[i - 1];
-
-            if (max < sum) {
-                max = sum;
-                start = i;
-            }
-        }
-
-        return secondToTime(start);
+        return arr;
     }
 
     private String secondToTime(int second) {
-        StringBuilder sb = new StringBuilder();
+        int minute = second / 60;
+        second %= 60;
 
-        for (int i = 2; i >= 0; i--) {
-            int t = second / (int) Math.pow(60, i);
-            second %= (int) Math.pow(60, i);
+        int hour = minute / 60;
+        minute %= 60;
 
-            if (t < 10) {
-                sb.append(0).append(t);
-            } else {
-                sb.append(t);
-            }
-
-            if (i != 0)
-                sb.append(":");
-        }
-
-        return sb.toString();
+        return (hour < 10 ? "0" + hour : hour) + ":" + (minute < 10 ? "0" + minute : minute) + ":"
+                + (second < 10 ? "0" + second : second);
     }
 
     private int timeToSecond(String time) {
-        int second = 0;
-        String[] arr = time.split(":");
-
-        second += Integer.parseInt(arr[0]) * 3600;
-        second += Integer.parseInt(arr[1]) * 60;
-        second += Integer.parseInt(arr[2]);
-
-        return second;
+        String[] splitTime = time.split(":");
+        int hour = Integer.parseInt(splitTime[0]);
+        int minute = Integer.parseInt(splitTime[1]);
+        int second = Integer.parseInt(splitTime[2]);
+        return (hour * 3600) + (minute * 60) + second;
     }
 
 

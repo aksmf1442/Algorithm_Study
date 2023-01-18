@@ -25,9 +25,11 @@ public class 불량사용자 {
 
 class 불량사용자_Solution {
 
+
     private Set<Set<String>> result;
     private String[] user_id;
     private String[] banned_id;
+
 
     public int solution(String[] user_id, String[] banned_id) {
         result = new HashSet<>();
@@ -61,7 +63,7 @@ class 불량사용자_Solution {
         for (String candidateBannedId : bannedIdSet) {
             String bannedId = banned_id[idx++];
             if (candidateBannedId.length() != bannedId.length() || !isPossibleBannedId(
-                candidateBannedId, bannedId)) {
+                    candidateBannedId, bannedId)) {
                 return false;
             }
         }
@@ -78,3 +80,4 @@ class 불량사용자_Solution {
     }
 
 }
+

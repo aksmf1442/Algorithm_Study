@@ -22,17 +22,21 @@ class 빛의경로사이클_Solution {
     int[] dx = {-1, 0, 1, 0};
     int[] dy = {0, 1, 0, -1};
 
+    List<Integer> answer;
+    Circle[][] circles;
+
     public int[] solution(String[] grid) {
-        List<Integer> answer = new ArrayList<>();
-        Circle[][] circles = new Circle[grid.length][grid[0].length()];
+        answer = new ArrayList<>();
+        circles = new Circle[grid.length][grid[0].length()];
 
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[i].length(); j++) {
-                circles[i][j] = new Circle(grid[i].substring(j, j + 1));
-            }
-        }
+        initCircles(grid);
+        findCycles();
+        answer.sort((a, b) -> a - b);
 
+        return answer.stream().mapToInt(a -> a).toArray();
+    }
 
+    private void findCycles() {
         for (int i = 0; i < circles.length; i++) {
             for (int j = 0; j < circles[i].length; j++) {
                 for (int z = 0; z < 4; z++) {
@@ -40,154 +44,86 @@ class 빛의경로사이클_Solution {
                         continue;
                     }
 
-                    int moveCount = 0;
-                    int x = i;
-                    int y = j;
-                    int idx = z;
-
-                    while (!circles[x][y].check[idx]) {
-                        moveCount++;
-
-                        Circle current = circles[x][y];
-                        current.check[idx] = true;
-
-                        x = x + dx[idx] < 0 ? circles.length - 1 : (x + dx[idx]) % circles.length;
-                        y = y + dy[idx] < 0 ? circles[0].length - 1 : (y + dy[idx]) % circles[0].length;
-
-                        Circle next = circles[x][y];
-
-                        // 아래에서 옴(위로 이동)
-                        if (idx == 0) {
-                            if (next.direction.equals("L")) {
-                                idx = 3;
-                            }
-
-                            if (next.direction.equals("R")) {
-                                idx = 1;
-                            }
-                            continue;
-                        }
-
-                        // 왼쪽에서 옴(오른쪽으로 이동)
-                        if (idx == 1) {
-                            if (next.direction.equals("L")) {
-                                idx = 0;
-                            }
-
-                            if (next.direction.equals("R")) {
-                                idx = 2;
-                            }
-                            continue;
-                        }
-
-                        // 위에서 옴(아래로 이동)
-                        if (idx == 2) {
-                            if (next.direction.equals("L")) {
-                                idx = 1;
-                            }
-
-                            if (next.direction.equals("R")) {
-                                idx = 3;
-                            }
-                            continue;
-                        }
-
-                        // 오른쪽에서 옴(왼쪽으로 이동)
-                        if (idx == 3) {
-                            if (next.direction.equals("L")) {
-                                idx = 2;
-                            }
-
-                            if (next.direction.equals("R")) {
-                                idx = 0;
-                            }
-                        }
-                    }
-
-                    answer.add(moveCount);
+                    int cycleCount = findCycleCount(i, j, z);
+                    answer.add(cycleCount);
                 }
             }
         }
-        answer.sort((a, b) -> a - b);
-
-        return answer.stream().mapToInt(a -> a).toArray();
     }
 
-    private int move(Circle[][] circles, int x, int y, int idx, int count) {
-        Circle current = circles[x][y];
+    private int findCycleCount(int x, int y, int idx) {
+        int cycleCount = 0;
 
-        if (current.check[idx]) {
-            return count;
+        while (!circles[x][y].check[idx]) {
+            cycleCount++;
+
+            Circle current = circles[x][y];
+            current.check[idx] = true;
+
+            x = x + dx[idx] < 0 ? circles.length - 1 : (x + dx[idx]) % circles.length;
+            y = y + dy[idx] < 0 ? circles[0].length - 1 : (y + dy[idx]) % circles[0].length;
+
+            Circle next = circles[x][y];
+
+            idx = findDirectionIdx(next, idx);
         }
-        current.check[idx] = true;
+        return cycleCount;
+    }
 
-        x = x + dx[idx] < 0 ? circles.length - 1 : (x + dx[idx]) % circles.length;
-        y = y + dy[idx] < 0 ? circles[0].length - 1 : (y + dy[idx]) % circles[0].length;
+    private void initCircles(String[] grid) {
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length(); j++) {
+                circles[i][j] = new Circle(grid[i].substring(j, j + 1));
+            }
+        }
+    }
 
-
-        Circle next = circles[x][y];
-
+    private int findDirectionIdx(Circle next, int idx) {
         // 아래에서 옴(위로 이동)
         if (idx == 0) {
-            if (next.direction.equals("S")) {
-                return move(circles, x, y, 0, count + 1);
-            }
-
             if (next.direction.equals("L")) {
-                return move(circles, x, y, 3, count + 1);
+                return 3;
             }
 
             if (next.direction.equals("R")) {
-                return move(circles, x, y, 1, count + 1);
+                return 1;
             }
         }
 
         // 왼쪽에서 옴(오른쪽으로 이동)
         if (idx == 1) {
-            if (next.direction.equals("S")) {
-                return move(circles, x, y, 1, count + 1);
-            }
-
             if (next.direction.equals("L")) {
-                return move(circles, x, y, 0, count + 1);
+                return 0;
             }
 
             if (next.direction.equals("R")) {
-                return move(circles, x, y, 2, count + 1);
+                return 2;
             }
         }
 
         // 위에서 옴(아래로 이동)
         if (idx == 2) {
-            if (next.direction.equals("S")) {
-                return move(circles, x, y, 2, count + 1);
-            }
-
             if (next.direction.equals("L")) {
-                return move(circles, x, y, 1, count + 1);
+                return 1;
             }
 
             if (next.direction.equals("R")) {
-                return move(circles, x, y, 3, count + 1);
+                return 3;
             }
         }
 
         // 오른쪽에서 옴(왼쪽으로 이동)
         if (idx == 3) {
-            if (next.direction.equals("S")) {
-                return move(circles, x, y, 3, count + 1);
-            }
-
             if (next.direction.equals("L")) {
-                return move(circles, x, y, 2, count + 1);
+                return 2;
             }
 
             if (next.direction.equals("R")) {
-                return move(circles, x, y, 0, count + 1);
+                return 0;
             }
         }
 
-        return move(circles, x, y, idx, count);
+        return idx;
     }
 
     class Circle {

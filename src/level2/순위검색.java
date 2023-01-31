@@ -26,15 +26,16 @@ public class 순위검색 {
 
 class 순위검색_Solution {
 
-    Map<String, List<Integer>> map = new HashMap<>();
+    Map<String, List<Integer>> combination = new HashMap<>();
     public int[] solution(String[] info, String[] query) {
         int[] answer = new int[query.length];
+
         for (String userInfo: info) {
-            dfs("", userInfo.split(" "), 0);
+            createCombination("", userInfo.split(" "), 0);
         }
 
-        for (String key : map.keySet()) {
-            Collections.sort(map.get(key));
+        for (String key : combination.keySet()) {
+            Collections.sort(combination.get(key));
         }
 
         for (int i = 0; i < query.length; i++) {
@@ -49,8 +50,8 @@ class 순위검색_Solution {
     }
 
     private int binarySearch(String key, int score) {
-        if (map.containsKey(key)) {
-            List<Integer> lst = map.get(key);
+        if (combination.containsKey(key)) {
+            List<Integer> lst = combination.get(key);
             int left = 0;
             int right = lst.size() - 1;
 
@@ -71,19 +72,15 @@ class 순위검색_Solution {
         return 0;
     }
 
-    private void dfs(String key, String[] userInfo, int depth) {
+    private void createCombination(String key, String[] userInfo, int depth) {
         if (depth == 4) {
-            if (map.containsKey(key)) {
-                map.get(key).add(Integer.parseInt(userInfo[4]));
-            } else {
-                List<Integer> lst = new ArrayList<>();
-                lst.add(Integer.parseInt(userInfo[4]));
-                map.put(key, lst);
-            }
+            List<Integer> lst = combination.getOrDefault(key, new ArrayList<>());
+            lst.add(Integer.parseInt(userInfo[4]));
+            combination.put(key, lst);
             return;
         }
 
-        dfs(key + "-", userInfo, depth + 1);
-        dfs(key + userInfo[depth], userInfo, depth + 1);
+        createCombination(key + "-", userInfo, depth + 1);
+        createCombination(key + userInfo[depth], userInfo, depth + 1);
     }
 }

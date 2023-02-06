@@ -13,10 +13,8 @@ public class 연속부분수열합의개수 {
 }
 
 class 연속부분수열합의개수_Solution {
-
     public int solution(int[] elements) {
         int N = elements.length;
-
         Set<Integer> candidate = new HashSet<>();
         for (int size = 1; size <= N; size++) {
             for (int i = 0; i < elements.length; i++) {

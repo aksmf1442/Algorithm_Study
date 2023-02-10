@@ -13,31 +13,29 @@ public class 호텔대실 {
 // 2. 해당 배열의 최대값을 구하면 결과 나옴.
 class 호텔대실_Solution {
     public int solution(String[][] book_time) {
-        int[] seconds = new int[timeToSecond("24:10")];
+        int[] minutes = new int[timeToMinute("24:10")];
 
         for (String[] time : book_time) {
             String startTime = time[0];
             String endTime = time[1];
 
-            seconds[timeToSecond(startTime)] += 1;
-            seconds[timeToSecond(endTime) + timeToSecond("00:10")] -= 1;
+            minutes[timeToMinute(startTime)] += 1;
+            minutes[timeToMinute(endTime) + timeToMinute("00:10")] -= 1;
         }
 
-        for (int i = 1; i < seconds.length; i++) {
-            seconds[i] += seconds[i - 1];
+        for (int i = 1; i < minutes.length; i++) {
+            minutes[i] += minutes[i - 1];
         }
 
-        return Arrays.stream(seconds).max().getAsInt();
+        return Arrays.stream(minutes).max().getAsInt();
     }
 
-    private int timeToSecond(String time) {
+    private int timeToMinute(String time) {
         String[] splitTime = time.split(":");
         int hour = Integer.parseInt(splitTime[0]);
         int minute = Integer.parseInt(splitTime[1]);
-        int second = 0;
 
-        second += hour * 3600;
-        second += minute * 60;
-        return second;
+        minute += hour * 60;
+        return minute;
     }
 }

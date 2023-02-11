@@ -15,8 +15,6 @@ class 스티커모으기2_Solution {
     public int solution(int sticker[]) {
         int[] dp1 = new int[sticker.length];
         int[] dp2 = new int[sticker.length];
-        Arrays.fill(dp1, 0);
-        Arrays.fill(dp2, 0);
 
         if (sticker.length == 1) {
             return sticker[0];

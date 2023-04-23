@@ -17,31 +17,32 @@ public class 보석쇼핑 {
 class 보석쇼핑_Solution {
     public int[] solution(String[] gems) {
         Map<String, Integer> gemMap = new HashMap<>();
-        Set<String> gemCategory = new HashSet<>();
+        int gemSize = new HashSet<>(Arrays.asList(gems)).size();
 
         int len = Integer.MAX_VALUE;
+
         int start = 0;
         int end = 0;
         int idx = 0;
 
-        gemCategory.addAll(Arrays.asList(gems));
-
-        // 보석을 처음부터 끝까지 순회
         for (int i = 0; i < gems.length; i++) {
-
+            // gemMap에 넣기.
             gemMap.put(gems[i], gemMap.getOrDefault(gems[i], 0) + 1);
 
+            // gemMap의 맨 앞의 값이 두 개 이상일 경우 start값을 +1해준다.
             while (gemMap.get(gems[idx]) > 1) {
                 gemMap.put(gems[idx], gemMap.get(gems[idx]) - 1);
                 idx++;
             }
 
-            if (gemMap.size() == gemCategory.size() && len > (i - idx)) {
-                len = i - idx;
-                end = i + 1;
+            // 최대 길이 정하기
+            if (gemMap.size() == gemSize && len > (i - idx + 1)) {
+                len = i - idx + 1;
                 start = idx + 1;
+                end = i + 1;
             }
         }
+
         return new int[]{start, end};
     }
 }

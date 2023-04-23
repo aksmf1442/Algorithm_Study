@@ -51,7 +51,7 @@ public class 배달 {
 
 class 배달_Solution {
 
-    List<int[]>[] graph;
+    List<Node>[] graph;
 
     public int solution(int N, int[][] road, int K) {
         graph = new ArrayList[N+1];
@@ -71,8 +71,8 @@ class 배달_Solution {
                 graph[b] = new ArrayList<>();
             }
 
-            graph[a].add(new int[]{b, c});
-            graph[b].add(new int[]{a, c});
+            graph[a].add(new Node(b, c));
+            graph[b].add(new Node(a, c));
         }
 
         int result = dijkstra(1, N, K);
@@ -87,33 +87,21 @@ class 배달_Solution {
         distanceArr[start] = 0;
 
         // queue 현재 있는 마을과 여기까지의 가중치를 넣을 예정
-        Queue<List<Integer>> queue = new LinkedList<>();
-        List<Integer> a = new ArrayList<>();
-        a.add(start);
-        a.add(0);
-        queue.add(a);
+        Queue<Node> queue = new LinkedList<>();
+        queue.add(new Node(start, 0));
 
         while (!queue.isEmpty()) {
-            List<Integer> lst = queue.poll();
-            int node = lst.get(0);
-            int distance = lst.get(1);
+            Node node = queue.poll();
 
-            for (int[] current : graph[node]) {
-                int target = current[0];
-                int targetDistance = current[1];
-
-                if (targetDistance + distance >= distanceArr[target]) {
+            for (Node current : graph[node.target]) {
+                if (current.cost + node.cost >= distanceArr[current.target]) {
                     continue;
                 }
 
-                int dis = targetDistance + distance;
+                int dis = node.cost + current.cost;
 
-                List<Integer> l = new ArrayList<>();
-                l.add(target);
-                l.add(dis);
-
-                distanceArr[target] = dis;
-                queue.add(l);
+                distanceArr[current.target] = dis;
+                queue.add(new Node(current.target, dis));
             }
 
         }
@@ -126,4 +114,16 @@ class 배달_Solution {
         }
         return result;
     }
+
+    class Node {
+        int target;
+        int cost;
+
+        public Node(int target, int cost) {
+            this.target = target;
+            this.cost = cost;
+        }
+
+    }
+
 }

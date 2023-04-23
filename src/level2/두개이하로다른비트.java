@@ -1,8 +1,7 @@
 package level2;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.stream.Collectors;
+import java.util.*;
+import java.util.stream.*;
 
 public class 두개이하로다른비트 {
 

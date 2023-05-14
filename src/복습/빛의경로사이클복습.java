@@ -30,7 +30,7 @@ class 빛의경로사이클복습_Solution {
         N = grid.length;
         M = grid[0].length();
 
-        Node[][] nodes = new Node[N][M];
+        Nodee[][] nodes = new Nodee[N][M];
         initNodes(nodes, grid);
         List<Integer> result = new ArrayList<>();
 
@@ -47,7 +47,7 @@ class 빛의경로사이클복습_Solution {
                     int count = 0;
 
                     while (nodes[x][y].validateMove(idx)) {
-                        Node node = nodes[x][y];
+                        Nodee node = nodes[x][y];
                         node.addComeIn(idx);
                         count++;
                         // 왼상우하 // 우하왼상
@@ -89,11 +89,11 @@ class 빛의경로사이클복습_Solution {
         return answer;
     }
 
-    private void initNodes(Node[][] nodes, String[] grid) {
+    private void initNodes(Nodee[][] nodes, String[] grid) {
         for (int i = 0; i < N; i++) {
             String[] g = grid[i].split("");
             for (int j = 0; j < M; j++) {
-                Node node = new Node(g[j], i, j);
+                Nodee node = new Nodee(g[j], i, j);
                 nodes[i][j] = node;
             }
         }

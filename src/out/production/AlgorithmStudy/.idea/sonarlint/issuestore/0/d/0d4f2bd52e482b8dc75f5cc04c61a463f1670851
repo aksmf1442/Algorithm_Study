@@ -1,0 +1,22 @@
+
+J
+java:S1066>"/Merge this if statement with the enclosing one.(ÂµòŠþÿÿÿÿ
+f	java:S117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(çƒæ¶
+b	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(ò»ƒ÷
+g	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(”É×Ïúÿÿÿÿ
+t	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ÎÓØ¦ÿÿÿÿÿ
+N	java:S106"9Replace this use of System.out or System.err by a logger.(¥¹ËÕ
+h
+java:S3776J"RRefactor this method to reduce its Cognitive Complexity from 27 to the 15 allowed.(ÕÄ§Ï
+n
+java:S1602M"SRemove useless curly braces around statement and then remove useless return keyword(‡õŒ›üÿÿÿÿ
+Z
+java:S3358N"DExtract this nested ternary operation into an independent statement.(í€„à
+i
+java:S1602S"SRemove useless curly braces around statement and then remove useless return keyword(á—ƒµ
+Z
+java:S3358T"DExtract this nested ternary operation into an independent statement.(í€„à
+`
+java:S1764"JCorrect one of the identical sub-expressions on both sides of operator "-"(ï¨ôÏ
+`
+java:S1764"JCorrect one of the identical sub-expressions on both sides of operator "-"(ï¨ôÏ
